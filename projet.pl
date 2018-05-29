@@ -15,9 +15,7 @@ numero([1,2,3,4,5,6,7,8,9]).
 %Recupere l indice de la liste
 indice(L,C, N):- N is (L-1) * 9 + C.
 
-%Recupere le Ieme Element de la liste
-element([T|_], 0) :- T.
-element([_|Q], I) :- element(Q, J), I is J+1.
+
 
 %Test si Element dans liste
 dansListe([V|_], V).
@@ -45,4 +43,4 @@ recupererLigne(L, I, G) :- recupererLigne(L, I, G, 9).
 supprimeElement([T|Q], X, L, R) :- ajoutElement(L, T, C), supprimeElement(Q, X, C, R).
 supprimeElement([X|Q], X, L, R) :- concat(L, Q, R), !.
 
-valideLigne(I) :- recupererLigne(R, I, A), 
+valideLigne(I) :- recupererLigne(R, I, A), numero(B), element()
