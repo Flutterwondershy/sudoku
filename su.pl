@@ -13,20 +13,7 @@ grille(L) :- append(
 			]
 			, [], L).
 
-%TODO: sousGrilles pour les 9
-sousGrille([
-		[E00, E01, E02, E03, E04, E05, E06, E07, E08],
-		[E10, E11, E12, E13, E14, E15, E16, E17, E18],
-		[E20, E21, E22, E23, E24, E25, E26, E27, E28],
-		[E30, E31, E32, E33, E34, E35, E36, E37, E38],
-		[E40, E41, E42, E43, E44, E45, E46, E47, E48],
-		[E50, E51, E52, E53, E54, E55, E56, E57, E58],
-		[E60, E61, E62, E63, E64, E65, E66, E67, E68],
-		[E70, E71, E72, E73, E74, E75, E76, E77, E78],
-		[E80, E81, E82, E83, E84, E85, E86, E87, E88]
-	]
-	, [A, B, C, D, E, F, G, H, I]).
-
+		
 %Nième ligne de la grille [L|Q]
 ligne([L|_], 0, L).
 ligne([_|Q], N, L) :- N2 is N-1, ligne(Q, N2, L).
@@ -39,3 +26,19 @@ elementLigne([_|Q], N, R) :- N2 is N-1, elementLigne(Q, N2, R).
 element(G, X, Y, R) :- ligne(G, Y, L), elementLigne(L, X, R).
 
 
+sousGrille2(G, X, Y, R) :- element(G, X1, Y1, A),
+			  element(G, X1, Y, B),
+			  element(G, X1, Y2, C),
+			  element(G, X, Y1, D),
+			  element(G, X, Y, E),
+			  element(G, X, Y2, F),
+			  element(G, X2, Y1, G),
+			  element(G, X2, Y, H),
+			  element(G, X2, Y2, I),
+			  append([A, B, C, D, E, F, G, H, I], [], R),
+			  X1 is X-1,
+			  X2 is X+1,
+			  Y1 is Y-1,
+			  Y2 is Y-2.
+
+sousGrille(G, X, Y, R) :- sousGrille2(G, A, B, R), A is 3*X+1, B is 3*Y+1.
