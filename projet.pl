@@ -27,11 +27,14 @@ ajoutElement(L, X, [X|L]).
 
 raccourcirTete(L, L, 0).
 raccourcirTete(R, [T|Q], Taille) :- raccourcirTete(R, Q, Taille2), Taille is Taille2 +1.
-
+%Recuperer Ligne
 recupererLigne([], _, _, 0).
 recupererLigne(R, 0, [T|Q], Taille) :- recupererLigne(L2, 0, Q, TailleM1), concat([T], L2, R), Taille is TailleM1+1.
 recupererLigne(L, I, G, Taille) :- raccourcirTete(G2, G, Taille), recupererLigne(L, J, G2, Taille), I is J+1.
 
 recupererLigne(L, I, G) :- recupererLigne(L, I, G, 9).
 
+%Supprime Element
+supprimeElement([T|Q], X, L, R) :- ajoutElement(L, T, C), supprimeElement(Q, X, C, R).
+supprimeElement([X|Q], X, L, R) :- concat(L, Q, R), !.
 %valideLigne([T|Q], C):-
