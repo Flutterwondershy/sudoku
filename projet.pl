@@ -28,16 +28,28 @@ concat([T|Q], L, [T|R]) :- concat(Q, L, R).
 %ajouter Element
 ajoutElement(L, X, [X|L]).
 
+recupererElement([T|_], 0, T).
+recupererElement([_|Q], I, R) :- recupererElement(Q, J, R), I is J+1.
+
+recupererElementGrille(G, L, C, R) :- indice(L, C, I), recupererElement(G, I, R).
+
 %Supprime Tete jusqu a Taille
 raccourcirTete(L, L, 0).
-raccourcirTete(R, [T|Q], Taille) :- raccourcirTete(R, Q, Taille2), Taille is Taille2 +1.
+raccourcirTete(R, [_|Q], Taille) :- raccourcirTete(R, Q, Taille2), Taille is Taille2 +1.
 
 %Recuperer Ligne
 recupererLigne([], _, _, 0).
 recupererLigne(R, 0, [T|Q], Taille) :- recupererLigne(L2, 0, Q, TailleM1), concat([T], L2, R), Taille is TailleM1+1.
 recupererLigne(L, I, G, Taille) :- raccourcirTete(G2, G, Taille), recupererLigne(L, J, G2, Taille), I is J+1.
-
 recupererLigne(L, I, G) :- recupererLigne(L, I, G, 9).
+
+%Recuperer Colonne TODO
+recupererColonne([], _, _, 0, _).
+recupererColonne([E|R], I, G, Taille, J) :- recupererElementGrille(G, I, J, E), recupererColonne(R, I, G, Taille2, J2), J is J2+1, Taille is Taille2+1.
+recupererColonne(C, I, G, Taille) :- recupererColonne(C, I, G, Taille, 0).
+recupererColonne(C, I, G) :- recupererColonne(C, I, G, 9, 0).
+
+%valideLigne([T|Q], C):-
 
 %Supprime Element
 supprimeElement([T|Q], X, L, R) :- ajoutElement(L, T, C), supprimeElement(Q, X, C, R).
