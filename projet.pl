@@ -1,13 +1,13 @@
 grille([
-  1,2,3,4,5,6,7,8,2,
-  2,3,3,4,5,6,7,8,8,
-  3,2,4,5,5,8,5,8,6,
-  4,2,3,4,5,6,6,8,8,
-  5,2,2,5,7,6,6,8,7,
-  6,2,3,5,5,7,7,8,6,
-  7,2,2,4,5,6,8,8,6,
-  8,2,3,4,5,5,7,9,9,
-  9,2,3,4,5,6,6,7,8
+  1,2,3, ' ',5,6,7,8,2,
+  2,3,3,' ',5,6,7,8,8,
+  3,2,' ',5,5,8,5,8,6,
+  4,' ',3,4,5,6,6,8,8,
+  ' ',2,2,5,7,6,6,8,7,
+  6,2,' ',5,5,7,7,8,6,
+  7,2,2,4,' ',6,8,8,6,
+  8,2,3,4,5,5,' ',9,9,
+  9,2,3,4,5,6,6,7,' '
   ]).
 
 numero([1,2,3,4,5,6,7,8,9]) :- !.
@@ -93,3 +93,20 @@ valideCol(I, N, Col, NumPossible) :- recupererElement(Col, N, E), dansListe(NumP
 valideCol(I, 0, Col, B):- !.
 
 %Valider Grille 3x3 TODO
+
+
+%afficher Grille
+afficherLigne([], _).
+afficherLigne([T|Q], N):- N > 0, M is N-1, write(' '), write(T), write(' '), afficherLigne(Q, M).
+afficherLigne(L, 0) :- write('|'), afficherLigne(L, 3).
+afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'),
+			recupererLigne(G, 2, L2), afficherLigne(L2, 3), write('\n'),
+			recupererLigne(G, 3, L3), afficherLigne(L3, 3), write('\n'),
+			write('---------+---------+---------\n'),
+			recupererLigne(G, 4, L4), afficherLigne(L4, 3), write('\n'),
+			recupererLigne(G, 5, L5), afficherLigne(L5, 3), write('\n'),
+			recupererLigne(G, 6, L6), afficherLigne(L6, 3), write('\n'),
+			write('---------+---------+---------\n'),
+			recupererLigne(G, 7, L7), afficherLigne(L7, 3), write('\n'),
+			recupererLigne(G, 8, L8), afficherLigne(L8, 3), write('\n'),
+			recupererLigne(G, 9, L9), afficherLigne(L9, 3).
