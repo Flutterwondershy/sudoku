@@ -110,3 +110,8 @@ afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'
 			recupererLigne(G, 7, L7), afficherLigne(L7, 3), write('\n'),
 			recupererLigne(G, 8, L8), afficherLigne(L8, 3), write('\n'),
 			recupererLigne(G, 9, L9), afficherLigne(L9, 3).
+
+%remplacerElement
+remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V).
+remplacerElement([_|Q], [V|Q], 0, V).
+remplacerElement([T1|Q1], R, N, V):- concat([T1], Q, R), remplacerElement(Q1, Q, M, V), N is M+1.
