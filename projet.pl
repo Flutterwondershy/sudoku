@@ -153,11 +153,12 @@ genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V)
 
 %Liste des indices Non modifiables
 unifieBS(' ').
-trouverListeNonModifiable([T|Q], ListeNonModifiable) :- trouverListeNonModifiable([T|Q], ListeNonModifiable, []), !.
-trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- unifieBS(T), trouverListeNonModifiable(Q, ListeNonModifiable, L),!.
-trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- \+unifieBS(T), unifie(T, T1),concat(L, T1, ListeNonModifiable1),
-      trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1),!.
-trouverListeNonModifiable([], ListeNonModifiable, L):- concat([], L, ListeNonModifiable),!.
+trouverListeNonModifiable([T|Q], ListeNonModifiable) :- trouverListeNonModifiable([T|Q], ListeNonModifiable, [], 0), !.
+trouverListeNonModifiable([T|Q], ListeNonModifiable, L, Compteur) :- unifieBS(T), Compteur1 is Compteur+1,
+      trouverListeNonModifiable(Q, ListeNonModifiable, L, Compteur1),!.
+trouverListeNonModifiable([T|Q], ListeNonModifiable, L, Compteur) :- \+unifieBS(T), Compteur1 is Compteur+1, unifie(Compteur, T1),concat(L, T1, ListeNonModifiable1),
+      trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1, Compteur1),!.
+trouverListeNonModifiable([], ListeNonModifiable, L, _):- concat([], L, ListeNonModifiable),!.
 
 %Resoudre Grille TODO NON OPERATIONEL
 resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable), resoudre(G,R,ListeNonModifiable, 0).
@@ -172,7 +173,7 @@ resoudre(G,R,_, 3) :- concat([], G, R).
 %temporaire, à supprimer une fois programmés:
 solve(_,_).
 
-remplacementUtilisateur(G, R, L, C, V, LNM):- indice(L,C,N), \+(dansListe(LNM, N)), 
+remplacementUtilisateur(G, R, L, C, V, LNM):- indice(L,C,N), \+(dansListe(LNM, N)),
 						valideAjout(G, N), remplacerElement(G, R, L, C, V).
 
 jouer(G, LNM):- nl, afficherGrille(G),
