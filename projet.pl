@@ -146,4 +146,13 @@ genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V)
 genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V), valideSudoku(0,G1), Compteur1 is Compteur-1, random(0,81,N1),
         genererN(G1,R,ListeNonModifiable,Compteur1, N1).
 
-%Liste des indices non modifiables
+unifieBS(' ').
+%Liste Non modifiables
+trouverListeNonModifiable([T|Q], ListeNonModifiable) :- trouverListeNonModifiable([T|Q], ListeNonModifiable, []), !.
+trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- unifieBS(T), trouverListeNonModifiable(Q, ListeNonModifiable, L).
+trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- \+unifieBS(T), unifie(T, T1),concat(L, T1, ListeNonModifiable1),
+      trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1).
+trouverListeNonModifiable([], ListeNonModifiable, L):- concat([], L, ListeNonModifiable).
+
+%Resoudre Grille
+%resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable).
