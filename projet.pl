@@ -140,7 +140,7 @@ valideAjout(G,N) :- indiceInverse(N,L,C), valideLigne(L,G), valideCol(C,G), indi
 generer(G, R, Compteur) :- random(0,10,V), random(0,10, L), random(0,10, C),  indice(L,C,N), remplacerElement(G, G1, L, C, V), unifie(N, N1),
       concat([], N1, ListeNonModifiable), Compteur1 is Compteur-1, random(0,81,N2), genererN(G1, R, ListeNonModifiable, Compteur1, N2).
 
-genererN(G,R,ListeNonModifiable,0, N) :- concat([], G, R), afficherGrille(R).
+genererN(G,R,ListeNonModifiable,0, N) :- concat([], G, R).
 genererN(G,R,ListeNonModifiable,Compteur, N) :- dansListe(ListeNonModifiable, N), random(0,81,N1), genererN(G,R,ListeNonModifiable,Compteur,N1).
 genererN(G,R,ListeNonModifiable,Compteur, N) :- \+dansListe(ListeNonModifiable, N), unifie(N,N1), concat(ListeNonModifiable, N1, ListeNonModifiable1),
       random(0,10,V), genererV(G,R,ListeNonModifiable1,Compteur, N, V).
@@ -170,24 +170,23 @@ resoudre(G,R,_, 3) :- concat([], G, R).
 
 %menu
 %temporaire, à supprimer une fois programmés:
-	solve(G, R).
+solve(_,_).
 
-remplacementUtilisateur(G, R, L, C, V):-indice(L,C,N), recupererElement(G, N, ' '),
-					remplacerElement(G, R, L, C, V).
+remplacementUtilisateur(G, R, L, C, V, LNM):- indice(L,C,N), \+(dansListe(LNM, N)), 
+						valideAjout(G, N), remplacerElement(G, R, L, C, V).
 
-jouer(G):- nl, afficherGrille(G),
+jouer(G, LNM):- nl, afficherGrille(G),
 			nl,
 			write('Placement d\'une case\n\tNuméro de colonne: '), read(C),
 			write('\tNuméro de ligne: '), read(L),
 			write('\tValeur: '), read(V),
-			remplacementUtilisateur(G, R, L, C, V),
-			jouer(R).
-solve(_,_).
+			remplacementUtilisateur(G, R, L, C, V, LNM),
+			jouer(R, LNM).
 
-menuDifficulte(2) :- grille(G), generer(G, R, 20), jouer(R).
-menuDifficulte(1) :- grille(G), generer(G, R, 30), jouer(R).
+menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(G, L), jouer(R, L).
+menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(G, L), jouer(R, L).
 menuDifficulte(_) :- menu(1).
-menu(1) :- write('Difficulté? (1 ou 2)\n'), read(D), menuDifficulte(D).
+menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D).
 
 demanderGrille(G) :- demanderGrille(G, 81).
 demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
