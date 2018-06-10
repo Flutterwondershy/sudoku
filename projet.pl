@@ -125,7 +125,7 @@ afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'
 			write('---------+---------+---------\n'),
 			recupererLigne(G, 7, L7), afficherLigne(L7, 3), write('\n'),
 			recupererLigne(G, 8, L8), afficherLigne(L8, 3), write('\n'),
-      recupererLigne(G, 9, L9), afficherLigne(L9, 3).
+      			recupererLigne(G, 9, L9), afficherLigne(L9, 3).
 
 %remplacerElement
 remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V).
@@ -147,3 +147,32 @@ genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V)
         genererN(G1,R,ListeNonModifiable,Compteur1, N1).
 
 %Liste des indices non modifiables
+
+
+%menu
+%temporaire, à supprimer une fois programmés:
+	solve(G, R). 
+
+remplacementUtilisateur(G, R, L, C, V):-indice(L,C,N), recupererElement(G, N, ' '),
+					remplacerElement(G, R, L, C, V).
+
+jouer(G):- nl, afficherGrille(G),
+			nl,
+			write('Placement d\'une case\n\tNuméro de colonne: '), read(C), 
+			write('\tNuméro de ligne: '), read(L), 
+			write('\tValeur: '), read(V),
+			remplacementUtilisateur(G, R, L, C, V),
+			jouer(R).
+solve(_,_).
+
+menuDifficulte(2) :- grille(G), generer(G, R, 20), jouer(R).
+menuDifficulte(1) :- grille(G), generer(G, R, 30), jouer(R).
+menuDifficulte(_) :- menu(1).
+menu(1) :- write('Difficulté? (1 ou 2)\n'), read(D), menuDifficulte(D).
+
+demanderGrille(G) :- demanderGrille(G, 81).
+demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1. 
+menu(2) :- demanderGrille(G), solve(G, R), nl, afficherGrille(R).
+
+menu(_):-menu.
+ menu :- write('Jeu du sudoku\n\t1 - Jouer\n\t2 - Résoudre une grille\n_> '), read(V), menu(V).
