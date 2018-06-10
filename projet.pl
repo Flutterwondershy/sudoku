@@ -174,7 +174,7 @@ resoudre(G,R,_, 3) :- concat([], G, R).
 solve(_,_).
 
 remplacementUtilisateur(G, R, L, C, V, LNM):- indice(L,C,N), \+(dansListe(LNM, N)),
-						valideAjout(G, N), remplacerElement(G, R, L, C, V).
+						remplacerElement(G, R, L, C, V), valideAjout(R, N).
 
 jouer(G, LNM):- nl, afficherGrille(G),
 			nl,
@@ -184,8 +184,8 @@ jouer(G, LNM):- nl, afficherGrille(G),
 			remplacementUtilisateur(G, R, L, C, V, LNM),
 			jouer(R, LNM).
 
-menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(G, L), jouer(R, L).
-menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(G, L), jouer(R, L).
+menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(R, L), jouer(R, L).
+menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(R, L), jouer(R, L).
 menuDifficulte(_) :- menu(1).
 menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D).
 
