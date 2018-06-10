@@ -129,12 +129,12 @@ afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'
       			recupererLigne(G, 9, L9), afficherLigne(L9, 3).
 
 %remplacerElement
-remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V).
+remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V),!.
 remplacerElement([_|Q], [V|Q], 0, V).
 remplacerElement([T1|Q1], R, N, V):- concat([T1], Q, R), remplacerElement(Q1, Q, M, V), N is M+1.
 
 %valide nouvelle element
-valideAjout(G,N) :- indiceInverse(N,L,C), valideLigne(L,G), valideCol(C,G), indiceGrille(L,C,IndiceG), valideGrille(IndiceG,G).
+valideAjout(G,N) :- indiceInverse(N,L,C), valideLigne(L,G), valideCol(C,G), indiceGrille(L,C,IndiceG), valideGrille(IndiceG,G),!.
 
 %Generer Grille
 generer(G, R, Compteur) :- random(0,10,V), random(0,10, L), random(0,10, C),  indice(L,C,N), remplacerElement(G, G1, L, C, V), unifie(N, N1),
@@ -151,20 +151,21 @@ genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V)
         genererN(G1,R,ListeNonModifiable,Compteur1, N1).
 
 
-
-
-%Liste Non modifiables
+%Liste des indices Non modifiables
 unifieBS(' ').
 trouverListeNonModifiable([T|Q], ListeNonModifiable) :- trouverListeNonModifiable([T|Q], ListeNonModifiable, []), !.
-trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- unifieBS(T), trouverListeNonModifiable(Q, ListeNonModifiable, L).
+trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- unifieBS(T), trouverListeNonModifiable(Q, ListeNonModifiable, L),!.
 trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- \+unifieBS(T), unifie(T, T1),concat(L, T1, ListeNonModifiable1),
-      trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1).
-trouverListeNonModifiable([], ListeNonModifiable, L):- concat([], L, ListeNonModifiable).
+      trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1),!.
+trouverListeNonModifiable([], ListeNonModifiable, L):- concat([], L, ListeNonModifiable),!.
 
 %Resoudre Grille TODO
-resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable), resoudre(G,R,ListeNonModifiable).
-%resoudre(G,R,ListeNonModifiable) :-
-%Liste des indices non modifiables
+resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable), resoudre(G,R,ListeNonModifiable, 0).
+resoudre(G,R,ListeNonModifiable, N) :- dansListe(ListeNonModifiable, N), N1 is N+1, resoudre(G,R,ListeNonModifiable,N1).
+resoudre(G,R,ListeNonModifiable,N) :- \+dansListe(ListeNonModifiable,N), V is 1, resoudre(G,R,_,N,V).
+resoudre(G,R,ListeNonModifiable, N, V) :- remplacerElement(G,G1, N, V), valideAjout(G1,N), N1 is N+1, resoudre(G1,R,ListeNonModifiable, N1).
+resoudre(G,R,ListeNonModifiable, N,V) :- remplacerElement(G,G1, N, V), \+valideAjout(G1,N), V1 is V+1, resoudre(G,R,ListeNonModifiable, N,V1).
+resoudre(G,R,_, 3) :- concat([], G, R).
 
 
 %menu
