@@ -13,6 +13,7 @@ numero([1,2,3,4,5,6,7,8,9,' ']) :- !.
 
 %Recupere l indice de la liste
 indice(L,C, N):- N is (L-1) * 9 + C-1.
+indiceInverse(N,L,C) :- C is 1 + N mod 9,L is 1 + (1 + N-C) // 9.
 
 %Recupere l indice de Grille
 indiceGrille(1,1,1):- !.
@@ -98,7 +99,7 @@ valideCol(I, -1, Col, B):- !.
 %Valider Grille 3x3
 valideGrille(A2,G) :- recupererGrille(A2, R,G), valideLigne2(1, R).
 
-%Valider Sudoku TODO
+%Valider Sudoku
 valideToutesLignes(N,G) :- valideLigne(N,G), N1 is N-1, valideToutesLignes(N1,G).
 valideToutesLignes(0,G).
 
@@ -132,6 +133,9 @@ remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V)
 remplacerElement([_|Q], [V|Q], 0, V).
 remplacerElement([T1|Q1], R, N, V):- concat([T1], Q, R), remplacerElement(Q1, Q, M, V), N is M+1.
 
+%valide nouvelle element
+valideAjout(G,N) :- indiceInverse(N,L,C), valideLigne(L,G), valideCol(C,G), indiceGrille(L,C,IndiceG), valideGrille(IndiceG,G).
+
 %Generer Grille
 generer(G, R, Compteur) :- random(0,10,V), random(0,10, L), random(0,10, C),  indice(L,C,N), remplacerElement(G, G1, L, C, V), unifie(N, N1),
       concat([], N1, ListeNonModifiable), Compteur1 is Compteur-1, random(0,81,N2), genererN(G1, R, ListeNonModifiable, Compteur1, N2).
@@ -141,18 +145,21 @@ genererN(G,R,ListeNonModifiable,Compteur, N) :- dansListe(ListeNonModifiable, N)
 genererN(G,R,ListeNonModifiable,Compteur, N) :- \+dansListe(ListeNonModifiable, N), unifie(N,N1), concat(ListeNonModifiable, N1, ListeNonModifiable1),
       random(0,10,V), genererV(G,R,ListeNonModifiable1,Compteur, N, V).
 
-genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V), \+valideSudoku(0,G1), random(0,10,V1),
+genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V), \+valideAjout(G1,N), random(0,10,V1),
         genererV(G,R,ListeNonModifiable,Compteur, N, V1).
-genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V), valideSudoku(0,G1), Compteur1 is Compteur-1, random(0,81,N1),
+genererV(G,R,ListeNonModifiable,Compteur, N, V) :- remplacerElement(G, G1, N, V), valideAjout(G1,N), Compteur1 is Compteur-1, random(0,81,N1),
         genererN(G1,R,ListeNonModifiable,Compteur1, N1).
 
-unifieBS(' ').
+
+
 %Liste Non modifiables
+unifieBS(' ').
 trouverListeNonModifiable([T|Q], ListeNonModifiable) :- trouverListeNonModifiable([T|Q], ListeNonModifiable, []), !.
 trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- unifieBS(T), trouverListeNonModifiable(Q, ListeNonModifiable, L).
 trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- \+unifieBS(T), unifie(T, T1),concat(L, T1, ListeNonModifiable1),
       trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1).
 trouverListeNonModifiable([], ListeNonModifiable, L):- concat([], L, ListeNonModifiable).
 
-%Resoudre Grille
-%resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable).
+%Resoudre Grille TODO
+resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable), resoudre(G,R,ListeNonModifiable).
+%resoudre(G,R,ListeNonModifiable) :-
