@@ -159,7 +159,7 @@ trouverListeNonModifiable([T|Q], ListeNonModifiable, L) :- \+unifieBS(T), unifie
       trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1),!.
 trouverListeNonModifiable([], ListeNonModifiable, L):- concat([], L, ListeNonModifiable),!.
 
-%Resoudre Grille TODO
+%Resoudre Grille TODO NON OPERATIONEL
 resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable), resoudre(G,R,ListeNonModifiable, 0).
 resoudre(G,R,ListeNonModifiable, N) :- dansListe(ListeNonModifiable, N), N1 is N+1, resoudre(G,R,ListeNonModifiable,N1).
 resoudre(G,R,ListeNonModifiable,N) :- \+dansListe(ListeNonModifiable,N), V is 1, resoudre(G,R,_,N,V).
