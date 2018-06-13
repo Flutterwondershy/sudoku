@@ -167,7 +167,7 @@ trouverListeNonModifiable([], ListeNonModifiable, L, _):- concat([], L, ListeNon
 
 resoudre(G,R) :- trouverListeNonModifiable(G, LNM), afficherGrille(G),  resoudre3(G,R,LNM, 0),  !.
 
-resoudre3(G,R,LNM, 81) :- afficherGrille(G), !.
+resoudre3(G,R,LNM, 81) :- write('\n\n'), afficherGrille(G), !.
 
 resoudre3(G,R,LNM, N) :- dansListe(LNM,N), N1 is N+1, resoudre3(G, R, LNM, N1), !.
 
