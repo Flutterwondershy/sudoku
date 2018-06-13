@@ -1,4 +1,6 @@
 
+
+:- dynamic(grille/1).
 grille([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
         ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -109,13 +111,12 @@ valideToutesCols(0, G).
 valideToutesGrilles(0, G).
 valideToutesGrilles(N, G) :- valideGrille(N, G), N1 is N-1, valideToutesGrilles(N1, G).
 
-
-valideSudoku(0, G) :- valideToutesLignes(9, G), valideToutesCols(9, G), valideToutesGrilles(9, G).
+valideSudoku(G) :- valideToutesLignes(9, G), valideToutesCols(9, G), valideToutesGrilles(9, G).
 
 %afficher Grille
 afficherLigne([], _).
 afficherLigne([T|Q], N):- N > 0, M is N-1, write(' '), write(T), write(' '), afficherLigne(Q, M).
-afficherLigne(L, 0) :- write('|'), afficherLigne(L, 3).
+afficherLigne(L, 0) :- write('|'), afficherLigne(L, 3), !.
 afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'),
 			recupererLigne(G, 2, L2), afficherLigne(L2, 3), write('\n'),
 			recupererLigne(G, 3, L3), afficherLigne(L3, 3), write('\n'),
@@ -126,10 +127,11 @@ afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'
 			write('---------+---------+---------\n'),
 			recupererLigne(G, 7, L7), afficherLigne(L7, 3), write('\n'),
 			recupererLigne(G, 8, L8), afficherLigne(L8, 3), write('\n'),
-      			recupererLigne(G, 9, L9), afficherLigne(L9, 3).
+      			recupererLigne(G, 9, L9), afficherLigne(L9, 3),!.
 
 %remplacerElement
-remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V),!.
+:- dynamic(remplacerElement/4).
+remplacerElement(E, S, L, C, V) :- indice(L, C, N), remplacerElement(E, S, N, V), retractall(grille(_)), asserta(grille(S)), !.
 remplacerElement([_|Q], [V|Q], 0, V).
 remplacerElement([T1|Q1], R, N, V):- concat([T1], Q, R), remplacerElement(Q1, Q, M, V), N is M+1.
 
@@ -159,16 +161,32 @@ trouverListeNonModifiable([T|Q], ListeNonModifiable, L, Compteur) :- unifieBS(T)
 trouverListeNonModifiable([T|Q], ListeNonModifiable, L, Compteur) :- \+unifieBS(T), Compteur1 is Compteur+1, unifie(Compteur, T1),concat(L, T1, ListeNonModifiable1),
       trouverListeNonModifiable(Q, ListeNonModifiable, ListeNonModifiable1, Compteur1),!.
 trouverListeNonModifiable([], ListeNonModifiable, L, _):- concat([], L, ListeNonModifiable),!.
+%----------------------------------------------------------------------------------------
+
+
 
 %Resoudre Grille TODO NON OPERATIONEL
-resoudre(G,R) :- trouverListeNonModifiable(G, ListeNonModifiable), resoudre(G,R,ListeNonModifiable, 0).
-resoudre(G,R,ListeNonModifiable, N) :- dansListe(ListeNonModifiable, N), N1 is N+1, resoudre(G,R,ListeNonModifiable,N1).
-resoudre(G,R,ListeNonModifiable,N) :- \+dansListe(ListeNonModifiable,N), V is 1, resoudre(G,R,_,N,V).
-resoudre(G,R,ListeNonModifiable, N, V) :- remplacerElement(G,G1, N, V), valideAjout(G1,N), N1 is N+1, resoudre(G1,R,ListeNonModifiable, N1).
-resoudre(G,R,ListeNonModifiable, N,V) :- remplacerElement(G,G1, N, V), \+valideAjout(G1,N), V1 is V+1, resoudre(G,R,ListeNonModifiable, N,V1).
-resoudre(G,R,_, 3) :- concat([], G, R).
+
+resoudre(G,R) :- trouverListeNonModifiable(G, LNM), afficherGrille(G),  resoudre3(G,R,LNM, 0),  !.
+
+resoudre3(G,R,LNM, 81) :- afficherGrille(G), !.
+
+resoudre3(G,R,LNM, N) :- dansListe(LNM,N), N1 is N+1, resoudre3(G, R, LNM, N1), !.
+
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 1),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 2),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 3),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 4),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 5),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 6),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 7),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 8),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 9),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
+resoudre3(G,R,LNM, N) :- remplacerElement(G,G1,N, ' '), fail.
 
 
+
+%------------------------------------------------------------------------------------
 %menu
 %temporaire, à supprimer une fois programmés:
 solve(_,_).
@@ -184,8 +202,8 @@ jouer(G, LNM):- nl, afficherGrille(G),
 			remplacementUtilisateur(G, R, L, C, V, LNM),
 			jouer(R, LNM).
 
-menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(G, L), jouer(R, L).
-menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(G, L), jouer(R, L).
+menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(R, L), jouer(R, L).
+menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(R, L), jouer(R, L).
 menuDifficulte(_) :- menu(1).
 menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D).
 
