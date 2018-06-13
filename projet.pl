@@ -163,9 +163,7 @@ trouverListeNonModifiable([T|Q], ListeNonModifiable, L, Compteur) :- \+unifieBS(
 trouverListeNonModifiable([], ListeNonModifiable, L, _):- concat([], L, ListeNonModifiable),!.
 %----------------------------------------------------------------------------------------
 
-
-
-%Resoudre Grille TODO NON OPERATIONEL
+%Resoudre Grille
 
 resoudre(G,R) :- trouverListeNonModifiable(G, LNM), afficherGrille(G),  resoudre3(G,R,LNM, 0),  !.
 
@@ -183,8 +181,6 @@ resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 7),  valid
 resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 8),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
 resoudre3(G,R,LNM, N) :- \+dansListe(LNM,N),remplacerElement(G,G1, N, 9),  valideAjout(G1,N),  N1 is N+1, resoudre3(G1,R,LNM,N1), !.
 resoudre3(G,R,LNM, N) :- remplacerElement(G,G1,N, ' '), fail.
-
-
 
 %------------------------------------------------------------------------------------
 %menu
