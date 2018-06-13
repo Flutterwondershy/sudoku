@@ -192,7 +192,7 @@ resoudre3(G,R,LNM, N) :- remplacerElement(G,G1,N, ' '), fail.
 solve(_,_).
 
 remplacementUtilisateur(G, R, L, C, V, LNM):- indice(L,C,N), \+(dansListe(LNM, N)),
-						valideAjout(G, N), remplacerElement(G, R, L, C, V).
+						remplacerElement(G, R, L, C, V), valideAjout(R, N).
 
 jouer(G, LNM):- nl, afficherGrille(G),
 			nl,
