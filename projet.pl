@@ -115,7 +115,7 @@ valideSudoku(G) :- valideToutesLignes(9, G), valideToutesCols(9, G), valideToute
 
 %afficher Grille
 afficherLigne([], _).
-afficherLigne([T|Q], N):- N > 0, M is N-1, write(' '), write(T), write(' '), afficherLigne(Q, M).
+afficherLigne([T|Q], N):- N > 0, M is N-1, write(' '), write(T), write(' '), afficherLigne(Q, M),!.
 afficherLigne(L, 0) :- write('|'), afficherLigne(L, 3).
 afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'),
 			recupererLigne(G, 2, L2), afficherLigne(L2, 3), write('\n'),
@@ -200,21 +200,24 @@ menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(R, 
 menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(R, L), jouer(R, L).
 menuDifficulte(_) :- menu(1).
 
-demanderGrille(G) :- demanderGrille(G, 81).
-demanderGrille(_, 0).
-demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
 
-demanderResolution(G, resoudre).
-demanderResolution(G, V) :- nl, 
+%demanderGrille(G) :- demanderGrille(G, 81).
+%demanderGrille(_, 0).
+%demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
+%
+%
+demanderGrille(_, R, 0) :- afficherGrille(R), resoudre(R, S), afficherGrille(S).
+demanderGrille(G, R, _) :- nl, 
 			afficherGrille(G), nl, 
 			write('Placement d\'une case\n\tNuméro de colonne: '), read(C),
 			write('\tNuméro de ligne: '), read(L),
-			write('\tValeur: '), read(V2),
-			remplacementUtilisateur(G, Res, L, C, V2, []),
-			demanderResolution(Res, V2).
+			write('\tValeur: '), read(V),
+			remplacementUtilisateur(G, Res, L, C, V, []),
+			demanderGrille(Res, R, V),
+			concat(Res, [], R).
 
 menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D),!.
-menu(2) :- grille(G), afficherGrille(G), demanderResolution(G, 0),!.
+menu(2) :- grille(G), demanderGrille(G, R, 1),resoudre(R, S),afficherGrille(S),!.
 %demanderGrille(G), resoudre(G, R), nl, afficherGrille(G).
 menu(_):-menu.
 
