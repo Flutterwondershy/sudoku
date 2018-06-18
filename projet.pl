@@ -206,19 +206,19 @@ menuDifficulte(_) :- menu(1).
 %demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
 %
 %
-demanderGrille(0, 0, 0) :- afficherGrille(R), resoudre(R, S).%, afficherGrille(S).
-demanderGrille(G, R, _) :- nl,
+demanderGrille(_, R, n) :- afficherGrille(R).%, resoudre(R, S), afficherGrille(S).
+demanderGrille(G, R, y) :- nl,
 			afficherGrille(G), nl,
 			write('Placement d\'une case\n\tNuméro de colonne: '), read(C),
 			write('\tNuméro de ligne: '), read(L),
 			write('\tValeur: '), read(V),
+			write('\tEntrer une autre valeur? (y/n)'), read(Continuer),
 			remplacementUtilisateur(G, Res, L, C, V, []),
-			demanderGrille(Res, R, V),
+			demanderGrille(Res, R, Continuer);
 			concat(Res, [], R).
 
 menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D),!.
-menu(2) :- grille(G), demanderGrille(G, R, 1),resoudre(R, S),afficherGrille(S),!.
-%demanderGrille(G), resoudre(G, R), nl, afficherGrille(G).
+menu(2) :- grille(G), demanderGrille(G, R, y).%,resoudre(R, S),afficherGrille(S),!.
 menu(_):-menu.
 
 menu :- write('Jeu du sudoku\n\t1 - Jouer\n\t2 - Résoudre une grille\n_> '), read(V), menu(V).
