@@ -116,7 +116,7 @@ valideSudoku(G) :- valideToutesLignes(9, G), valideToutesCols(9, G), valideToute
 %afficher Grille
 afficherLigne([], _).
 afficherLigne([T|Q], N):- N > 0, M is N-1, write(' '), write(T), write(' '), afficherLigne(Q, M).
-afficherLigne(L, 0) :- write('|'), afficherLigne(L, 3), !.
+afficherLigne(L, 0) :- write('|'), afficherLigne(L, 3).
 afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'),
 			recupererLigne(G, 2, L2), afficherLigne(L2, 3), write('\n'),
 			recupererLigne(G, 3, L3), afficherLigne(L3, 3), write('\n'),
@@ -127,7 +127,7 @@ afficherGrille(G) :- 	recupererLigne(G, 1, L1), afficherLigne(L1, 3), write('\n'
 			write('---------+---------+---------\n'),
 			recupererLigne(G, 7, L7), afficherLigne(L7, 3), write('\n'),
 			recupererLigne(G, 8, L8), afficherLigne(L8, 3), write('\n'),
-      			recupererLigne(G, 9, L9), afficherLigne(L9, 3),!.
+      			recupererLigne(G, 9, L9), afficherLigne(L9, 3).
 
 %remplacerElement
 :- dynamic(remplacerElement/4).
@@ -184,8 +184,6 @@ resoudre3(G,R,LNM, N) :- remplacerElement(G,G1,N, ' '), fail.
 
 %------------------------------------------------------------------------------------
 %menu
-%temporaire, à supprimer une fois programmés:
-solve(_,_).
 
 remplacementUtilisateur(G, R, L, C, V, LNM):- indice(L,C,N), \+(dansListe(LNM, N)),
 						remplacerElement(G, R, L, C, V), valideAjout(R, N).
@@ -201,11 +199,23 @@ jouer(G, LNM):- nl, afficherGrille(G),
 menuDifficulte(2) :- grille(G), generer(G, R, 20), trouverListeNonModifiable(R, L), jouer(R, L).
 menuDifficulte(1) :- grille(G), generer(G, R, 30), trouverListeNonModifiable(R, L), jouer(R, L).
 menuDifficulte(_) :- menu(1).
-menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D).
 
 demanderGrille(G) :- demanderGrille(G, 81).
+demanderGrille(_, 0).
 demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
-menu(2) :- demanderGrille(G), solve(G, R), nl, afficherGrille(R).
 
+demanderResolution(G, resoudre).
+demanderResolution(G, V) :- nl, 
+			afficherGrille(G), nl, 
+			write('Placement d\'une case\n\tNuméro de colonne: '), read(C),
+			write('\tNuméro de ligne: '), read(L),
+			write('\tValeur: '), read(V2),
+			remplacementUtilisateur(G, Res, L, C, V2, []),
+			demanderResolution(Res, V2).
+
+menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D),!.
+menu(2) :- grille(G), afficherGrille(G), demanderResolution(G, 0),!.
+%demanderGrille(G), resoudre(G, R), nl, afficherGrille(G).
 menu(_):-menu.
- menu :- write('Jeu du sudoku\n\t1 - Jouer\n\t2 - Résoudre une grille\n_> '), read(V), menu(V).
+
+menu :- write('Jeu du sudoku\n\t1 - Jouer\n\t2 - Résoudre une grille\n_> '), read(V), menu(V).
