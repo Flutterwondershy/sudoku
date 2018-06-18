@@ -206,9 +206,9 @@ menuDifficulte(_) :- menu(1).
 %demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
 %
 %
-demanderGrille(_, R, 0) :- afficherGrille(R), resoudre(R, S), afficherGrille(S).
-demanderGrille(G, R, _) :- nl, 
-			afficherGrille(G), nl, 
+demanderGrille(0, 0, 0) :- afficherGrille(R), resoudre(R, S).%, afficherGrille(S).
+demanderGrille(G, R, _) :- nl,
+			afficherGrille(G), nl,
 			write('Placement d\'une case\n\tNuméro de colonne: '), read(C),
 			write('\tNuméro de ligne: '), read(L),
 			write('\tValeur: '), read(V),
