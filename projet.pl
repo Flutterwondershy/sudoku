@@ -165,7 +165,7 @@ trouverListeNonModifiable([], ListeNonModifiable, L, _):- concat([], L, ListeNon
 
 %Resoudre Grille
 
-resoudre(G,R) :- trouverListeNonModifiable(G, LNM), afficherGrille(G),  resoudre3(G,R,LNM, 0),  !.
+resoudre(G,R) :- trouverListeNonModifiable(G, LNM),  resoudre3(G,R,LNM, 0),  !.
 
 resoudre3(G,R,LNM, 81) :- write('\n\n'), afficherGrille(G), !.
 
@@ -206,7 +206,6 @@ menuDifficulte(_) :- menu(1).
 %demanderGrille([T|Q], N) :- read(T), demanderGrille(Q, M), M is N-1.
 %
 %
-demanderGrille(_, R, 'n') :- afficherGrille(R), resoudre(R, S).%, afficherGrille(S).
 demanderGrille(G, R, 'y') :- nl,
 			afficherGrille(G), nl,
 			write('Placement d\'une case\n\tNuméro de colonne: '), read(C),
@@ -216,6 +215,8 @@ demanderGrille(G, R, 'y') :- nl,
 			remplacementUtilisateur(G, Res, L, C, V, []),
 			concat(Res, [], R),
       demanderGrille(Res, R, Continuer).
+
+demanderGrille(_, R, 'n') :- afficherGrille(R), resoudre(R, S).%, afficherGrille(S).
 
 menu(1) :- write('Difficulté? (1 ou 2)\n_> '), read(D), menuDifficulte(D),!.
 menu(2) :- grille(G), demanderGrille(G, R, 'y').%,resoudre(R, S),afficherGrille(S),!.
